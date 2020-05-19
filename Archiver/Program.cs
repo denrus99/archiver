@@ -11,14 +11,16 @@ namespace Archiver
     {
         static void Main(string[] args)
         {
-            var source = "text.txt";
-            var direction = "encodedfile.tx";
+            Console.WriteLine("Введите путь к файлу для архивации");
+            var source = Console.ReadLine();
+            var direction = source + ".arc";
             //Кодирование и сохранение файла
             Archiver.Encode(source, direction);
+            Console.WriteLine("Имя заархивированного файла:" + direction);
             //Расчет коэффициента сжатия
             Archiver.ShowCompressCoef(source, direction);
             //Распаковка файла
-            Console.WriteLine("Здрасьте, я ваш текст: {0}", Archiver.Decode(direction));
+            Archiver.Decode(direction, "new" + source);
         }
     }
 }

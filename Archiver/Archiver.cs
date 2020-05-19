@@ -29,7 +29,7 @@ namespace Archiver
             using (var fs = new FileStream(path, FileMode.OpenOrCreate))
             {
                 bf.Serialize(fs, eFile);
-                Console.WriteLine("Объект сериализован");
+                Console.WriteLine("Файл заархивирован");
             }
         }
 
@@ -39,12 +39,11 @@ namespace Archiver
             using (var fs = new FileStream(path, FileMode.OpenOrCreate))
             {
                 var eFile = (EncodedFile) bf.Deserialize(fs);
-                Console.WriteLine("Объект десериализован");
                 return eFile;
             }
         }
 
-        public static string Decode(string direction)
+        public static void Decode(string direction, string newDirection)
         {
             var eFile = ExtractFromFile(direction);
             var dictionaryForDecode = new Dictionary<string, char>();
@@ -85,8 +84,8 @@ namespace Archiver
                     throw new ArgumentOutOfRangeException(partOfMsg, "Строка не является началом ни одного ключа");
                 }
             }
-
-            return result.ToString();
+            File.WriteAllText(newDirection, result.ToString());
+            Console.WriteLine("Файл разархивирован в " + newDirection);
         }
 
         public static string StringToBinary(byte[] data)
@@ -121,10 +120,7 @@ namespace Archiver
             for (int i = 0; i < encodedString.Length; i += 8)
             {
                 newBytes.Add(Convert.ToByte(encodedString.ToString().Substring(i, 8), 2));
-                // Console.WriteLine("Bits:{0}, Byte:{1}", encodedString.ToString().Substring(i, 8),
-                //     Convert.ToByte(encodedString.ToString().Substring(i, 8), 2));
             }
-            // Console.WriteLine(encodedString.ToString());
             return newBytes;
         }
 
@@ -143,7 +139,7 @@ namespace Archiver
             if (tree.Code != null)
             {
                 dictionary.Add(Convert.ToChar(tree.Value), tree.Code);
-                Console.WriteLine("Frequency: {0}, Code: {1}, Char: {2}", tree.Frequency,
+                Console.WriteLine("Частота: {0}, Код: {1}, Символ: {2}", tree.Frequency,
                     tree.Code, Convert.ToChar(tree.Value));
             }
         }
@@ -201,13 +197,7 @@ namespace Archiver
                     dictionary[b]++;
                 }
             }
-
-            Console.WriteLine("GetFreqDict:");
-            // foreach (var key in dictionary.Keys)
-            // {
-            //     Console.WriteLine("Freq: {0}, Value: {1}, Char: {2}", dictionary[key], key, Convert.ToChar(key));
-            // }
-
+            Console.WriteLine("Таблица символов и кодов для них:");
             return dictionary;
         }
 
@@ -310,15 +300,6 @@ namespace Archiver
         public int GetCount()
         {
             return countElems;
-        }
-
-        public void ShowQueue()
-        {
-            foreach (var elem in data)
-            {
-                Console.WriteLine("Frequency: {0}, Value: {1}, Char: {2}", elem.Frequency, elem.Value,
-                    Convert.ToChar(elem.Value));
-            }
         }
     }
     
